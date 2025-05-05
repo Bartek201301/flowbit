@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Wykluczenie API
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://flowbit.pl/sitemap.xml 

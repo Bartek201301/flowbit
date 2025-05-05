@@ -1,0 +1,108 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable */
+
+@layer base {
+  :root {
+    --color-flowbit-50: #ECE0F5;
+    --color-flowbit-100: #D8C1EB;
+    --color-flowbit-200: #C5A3E1;
+    --color-flowbit-300: #A874D2;
+    --color-flowbit-400: #9556C8;
+    --color-flowbit-500: #813CB9;
+    --color-flowbit-600: #652F90;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    /* Dodane dla lepszej wydajności przewijania */
+    scroll-padding-top: 5rem;
+  }
+  
+  body {
+    @apply bg-white text-gray-900 font-sans;
+    text-rendering: optimizeSpeed;
+  }
+  
+  img, svg {
+    @apply max-w-full h-auto;
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-6 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-flowbit-400 to-flowbit-600 text-white hover:from-flowbit-500 hover:to-flowbit-600 focus:ring-flowbit-400;
+  }
+  
+  .btn-outline {
+    @apply btn border-2 border-flowbit-400 text-flowbit-500 hover:bg-flowbit-50 focus:ring-flowbit-400;
+  }
+  
+  .section {
+    @apply py-16 md:py-24;
+  }
+  
+  .heading {
+    @apply font-bold tracking-tight;
+  }
+  
+  .heading-1 {
+    @apply heading text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  .heading-2 {
+    @apply heading text-3xl md:text-4xl;
+  }
+  
+  .heading-3 {
+    @apply heading text-2xl md:text-3xl;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-flowbit-400 to-flowbit-600 bg-clip-text text-transparent;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-flowbit-400 focus:ring-offset-2;
+  }
+}
+
+/* Redukcja CLS (Cumulative Layout Shift) */
+@layer utilities {
+  .content-visibility-auto {
+    content-visibility: auto;
+  }
+  
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  /* Dodatkowe klasy dla optymalizacji */
+  .contain-paint {
+    contain: paint;
+  }
+
+  .optimized-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1000px;
+  }
+
+  /* Klasa dla lepszej wydajności na urządzeniach mobilnych */
+  .mobile-optimized {
+    @apply sm:will-change-transform sm:contain-paint;
+  }
+} 
