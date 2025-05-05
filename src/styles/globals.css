@@ -79,6 +79,11 @@
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-flowbit-400 focus:ring-offset-2;
   }
+  
+  /* Naprawiony gradient dla przycisków */
+  .primary-gradient {
+    background: linear-gradient(to right, #813CB9, #652F90);
+  }
 }
 
 /* Redukcja CLS (Cumulative Layout Shift) */

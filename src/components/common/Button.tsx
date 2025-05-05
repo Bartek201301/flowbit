@@ -32,7 +32,7 @@ type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 // Stałe obiekty ze stylami, aby uniknąć tworzenia ich za każdym razem
 // Kolory zostały dostosowane, aby zapewnić lepszy kontrast (min. 4.5:1 dla tekstu)
 const variantStyles = {
-  primary: 'bg-gradient-to-r from-flowbit-500 to-flowbit-700 text-white hover:from-flowbit-600 hover:to-flowbit-800 focus:ring-flowbit-400',
+  primary: 'bg-gradient-to-r from-flowbit-500 to-flowbit-700 text-white hover:from-flowbit-600 hover:to-flowbit-800 focus:ring-flowbit-400 primary-gradient',
   secondary: 'bg-flowbit-100 text-flowbit-800 hover:bg-flowbit-200 focus:ring-flowbit-300',
   outline: 'border-2 border-flowbit-500 text-flowbit-700 hover:bg-flowbit-50 focus:ring-flowbit-400',
   text: 'text-flowbit-700 hover:text-flowbit-800 hover:underline focus:ring-flowbit-400 bg-transparent',
@@ -68,6 +68,11 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>((p
     className,
   ].filter(Boolean).join(' ');
 
+  // Style bezpośrednie dla wariantu primary aby zapewnić działanie gradientu
+  const inlineStyle = variant === 'primary' ? {
+    background: 'linear-gradient(to right, #813CB9, #652F90)'
+  } : {};
+
   // Renderowanie ikony
   const renderIcon = () => {
     if (!icon) return null;
@@ -101,6 +106,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>((p
         type={type}
         disabled={disabled}
         aria-label={ariaLabel}
+        style={inlineStyle}
       >
         {buttonContent}
       </button>
@@ -117,6 +123,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>((p
       rel={target === '_blank' ? 'noopener noreferrer' : rel}
       className={baseClasses}
       aria-label={ariaLabel}
+      style={inlineStyle}
     >
       {buttonContent}
     </Link>

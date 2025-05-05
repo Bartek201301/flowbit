@@ -51,7 +51,7 @@ const PrivacyPolicy: React.FC = () => {
                 Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem ze strony internetowej Flowbit.
               </p>
               <p>
-                Administratorem danych osobowych jest Flowbit, kontakt e-mail: flowbit@gmail.com, tel: +48 518502133, +48 577 140 960.
+                Administratorem danych osobowych jest Flowbit, kontakt e-mail: flowbit.sm@gmail.com, tel: +48 518502133, +48 577 140 960.
               </p>
               <p>
                 Dbamy o bezpieczeństwo danych naszych Użytkowników. W szczególności postępujemy zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO).
@@ -107,7 +107,7 @@ const PrivacyPolicy: React.FC = () => {
                 <li>Prawo do wniesienia skargi do organu nadzorczego (Prezes Urzędu Ochrony Danych Osobowych)</li>
               </ul>
               <p>
-                Aby skorzystać z powyższych praw, prosimy o kontakt pod adresem e-mail: flowbit@gmail.com lub telefonicznie: +48 518502133, +48 577 140 960.
+                Aby skorzystać z powyższych praw, prosimy o kontakt pod adresem e-mail: flowbit.sm@gmail.com lub telefonicznie: +48 518502133, +48 577 140 960.
               </p>
 
               <h2 className="text-2xl font-bold mt-8">7. Zautomatyzowane podejmowanie decyzji</h2>
@@ -127,7 +127,7 @@ const PrivacyPolicy: React.FC = () => {
 
               <h2 className="text-2xl font-bold mt-8">10. Kontakt</h2>
               <p>
-                W sprawach związanych z ochroną danych osobowych można się z nami skontaktować pod adresem e-mail: flowbit@gmail.com lub telefonicznie: +48 518502133, +48 577 140 960.
+                W sprawach związanych z ochroną danych osobowych można się z nami skontaktować pod adresem e-mail: flowbit.sm@gmail.com lub telefonicznie: +48 518502133, +48 577 140 960.
               </p>
 
               <div className="my-8 p-4 border-t border-gray-200">

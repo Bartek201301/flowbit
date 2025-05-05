@@ -368,7 +368,7 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 z-10 py-16 sm:py-20">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
             <motion.div
-              className="mb-16"
+              className="mt-10 sm:mt-16 md:mt-20 mb-16"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
