@@ -10,7 +10,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   poweredByHeader: false,
-  allowedDevOrigins: [process.env.NODE_ENV === 'development' && '192.168.1.39'],
+  allowedDevOrigins: process.env.NODE_ENV === 'development' ? ['192.168.1.39'] : [],
   // Optymalizacje produkcyjne
   productionBrowserSourceMaps: false,
   // Konfiguracje stałych nagłówków
