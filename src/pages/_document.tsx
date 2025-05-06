@@ -4,6 +4,18 @@ export default function Document() {
   return (
     <Html lang="pl">
       <Head>
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JM22THRY8R"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-JM22THRY8R');
+            `
+          }}
+        />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
