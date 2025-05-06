@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+// Stały identyfikator Google Analytics
+const GA_MEASUREMENT_ID = 'G-JM22THRY8R';
+
 /**
  * Hook do śledzenia nawigacji między stronami w Google Analytics
  * Automatycznie wysyła zdarzenie pageview przy zmianie ścieżki URL
@@ -13,7 +16,7 @@ export const useAnalytics = () => {
       // Wywołanie gtag tylko jeśli funkcja jest dostępna
       if (typeof window !== 'undefined' && (window as any).gtag) {
         const gtag = (window as any).gtag;
-        gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, {
+        gtag('config', GA_MEASUREMENT_ID, {
           page_path: url,
         });
       }

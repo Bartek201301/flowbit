@@ -11,6 +11,9 @@ import { useAnalytics } from '../hooks/useAnalytics';
 const MemoizedLoading = memo(Loading);
 const MemoizedLayout = memo(Layout);
 
+// Stały identyfikator Google Analytics
+const GA_MEASUREMENT_ID = 'G-JM22THRY8R';
+
 export default function App({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -49,10 +52,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:image" content="/og-image.jpg" />
       </Head>
 
-      {/* Google Analytics - Dodaj swój ID śledzenia */}
-      {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-      )}
+      {/* Google Analytics */}
+      <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
 
       {loading ? (
         <MemoizedLoading />
