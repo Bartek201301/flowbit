@@ -4,8 +4,10 @@ import { Send, Mail, Instagram, Linkedin, ChevronDown, ArrowRight, MessageCircle
 
 const ContactPage: React.FC = () => {
   const [formState, setFormState] = useState({
+    name: '',
     email: '',
-    subject: '',
+    company: '',
+    interest: 'strony-internetowe',
     message: '',
     privacyPolicy: false,
   });
@@ -13,7 +15,7 @@ const ContactPage: React.FC = () => {
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
     
     setFormState({
@@ -22,12 +24,45 @@ const ContactPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!formState.privacyPolicy) {
-      e.preventDefault();
       alert('Proszę zaakceptować Politykę Prywatności, aby kontynuować.');
+      return;
     }
-    // Formularz obsługiwany przez Netlify - nie potrzebujemy dodatkowej logiki JS
+    
+    setFormStatus('sending');
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formState),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setFormStatus('success');
+        setFormState({
+          name: '',
+          email: '',
+          company: '',
+          interest: 'strony-internetowe',
+          message: '',
+          privacyPolicy: false,
+        });
+      } else {
+        console.error('Błąd formularza:', data.message);
+        setFormStatus('error');
+      }
+    } catch (error) {
+      console.error('Błąd wysyłania formularza:', error);
+      setFormStatus('error');
+    }
   };
 
   const faqData = [
@@ -169,15 +204,9 @@ const ContactPage: React.FC = () => {
               </motion.h2>
               
               <form
-                name="contact"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
                 className="space-y-6"
                 onSubmit={handleSubmit}
               >
-                <input type="hidden" name="form-name" value="contact" />
-                <input type="hidden" name="bot-field" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -193,6 +222,8 @@ const ContactPage: React.FC = () => {
                       name="name"
                       id="name"
                       required
+                      value={formState.name}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-flowbit-400 focus:border-transparent transition-all duration-300"
                       placeholder="Jan Kowalski"
                     />
@@ -234,6 +265,8 @@ const ContactPage: React.FC = () => {
                       type="text"
                       name="company"
                       id="company"
+                      value={formState.company}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-flowbit-400 focus:border-transparent transition-all duration-300"
                       placeholder="Nazwa firmy"
                     />
@@ -251,6 +284,8 @@ const ContactPage: React.FC = () => {
                     <select
                       name="interest"
                       id="interest"
+                      value={formState.interest}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-flowbit-400 focus:border-transparent transition-all duration-300 appearance-none bg-white"
                       style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: "right 0.5rem center", backgroundRepeat: "no-repeat", backgroundSize: "1.5em 1.5em", paddingRight: "2.5rem" }}
                     >
