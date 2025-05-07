@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true,
   images: {
-    domains: [],
+    domains: ['flowbit.pl', 'localhost'],
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
@@ -10,7 +12,6 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   poweredByHeader: false,
-  allowedDevOrigins: process.env.NODE_ENV === 'development' ? ['192.168.1.39'] : [],
   // Optymalizacje produkcyjne
   productionBrowserSourceMaps: false,
   // Konfiguracje stałych nagłówków
@@ -20,16 +21,16 @@ const nextConfig = {
         source: '/(.*)',
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            key: 'X-Frame-Options',
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },

@@ -5,8 +5,9 @@
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+# Usuwam plugin @netlify/plugin-nextjs, ponieważ powoduje błędy budowania
+# [[plugins]]
+#  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/_next/static/*"
