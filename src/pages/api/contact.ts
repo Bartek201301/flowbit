@@ -17,7 +17,7 @@ export default async function handler(
 
   try {
     // Pobieramy dane z formularza
-    const { name, email, message, privacyPolicy } = req.body;
+    const { name, email, company, interest, message, privacyPolicy } = req.body;
 
     // Sprawdzamy czy wszystkie wymagane pola są wypełnione
     if (!name || !email || !message || !privacyPolicy) {
@@ -47,6 +47,8 @@ export default async function handler(
       text: `
         Imię: ${name}
         Email: ${email}
+        Firma: ${company || 'Nie podano'}
+        Temat: ${interest || 'strony-internetowe'}
         
         Wiadomość:
         ${message}
@@ -57,6 +59,8 @@ export default async function handler(
         <h2>Nowa wiadomość z formularza kontaktowego</h2>
         <p><strong>Imię:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Firma:</strong> ${company || 'Nie podano'}</p>
+        <p><strong>Temat:</strong> ${interest || 'strony-internetowe'}</p>
         <p><strong>Wiadomość:</strong></p>
         <p>${message.replace(/\n/g, '<br>')}</p>
         <p><strong>Zaakceptowano politykę prywatności:</strong> Tak</p>

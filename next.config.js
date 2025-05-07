@@ -12,6 +12,16 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   poweredByHeader: false,
+  // Zmienne środowiskowe dla formularza kontaktowego
+  env: {
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    EMAIL_PORT: process.env.EMAIL_PORT,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+    EMAIL_RECIPIENT: process.env.EMAIL_RECIPIENT,
+    EMAIL_SECURE: process.env.EMAIL_SECURE,
+    SEND_CONFIRMATION: process.env.SEND_CONFIRMATION
+  },
   // Optymalizacje produkcyjne
   productionBrowserSourceMaps: false,
   // Konfiguracje stałych nagłówków
