@@ -188,7 +188,20 @@ const ContactPage: React.FC = () => {
                 Skontaktuj się z nami
               </motion.h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                name="contact"
+                method="POST"
+                data-netlify="true"
+                className="space-y-6"
+                onSubmit={(e) => {
+                  if (!formState.privacyPolicy) {
+                    e.preventDefault();
+                    alert('Proszę zaakceptować Politykę Prywatności, aby kontynuować.');
+                  }
+                  // Brak obsługi wysyłki przez JS, klasyczne wysyłanie formularza
+                }}
+              >
+                <input type="hidden" name="form-name" value="contact" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
