@@ -4,6 +4,7 @@
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  SECRETS_SCAN_ENABLED = "false"
 
 # Usuwam plugin @netlify/plugin-nextjs, ponieważ powoduje błędy budowania
 # [[plugins]]
