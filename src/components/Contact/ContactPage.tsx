@@ -23,31 +23,11 @@ const ContactPage: React.FC = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
     if (!formState.privacyPolicy) {
+      e.preventDefault();
       alert('Proszę zaakceptować Politykę Prywatności, aby kontynuować.');
-      return;
     }
-    
-    // Symulacja wysyłania formularza
-    setFormStatus('sending');
-    
-    setTimeout(() => {
-      // W prawdziwej implementacji tutaj byłoby wysyłanie formularza do API
-      setFormStatus('success');
-      setFormState({
-        email: '',
-        subject: '',
-        message: '',
-        privacyPolicy: false,
-      });
-      
-      // Reset statusu po 5 sekundach
-      setTimeout(() => {
-        setFormStatus('idle');
-      }, 5000);
-    }, 1500);
+    // Formularz obsługiwany przez Netlify - nie potrzebujemy dodatkowej logiki JS
   };
 
   const faqData = [
@@ -113,6 +93,28 @@ const ContactPage: React.FC = () => {
 
   return (
     <>
+      {/* Dodajemy ukryty formularz HTML dla bota Netlify */}
+      <div hidden>
+        <form
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <input type="hidden" name="bot-field" />
+          <input type="text" name="name" />
+          <input type="email" name="email" />
+          <input type="text" name="company" />
+          <select name="interest">
+            <option value="strony-internetowe">Strona internetowa</option>
+            <option value="automatyzacja">Automatyzacja</option>
+          </select>
+          <textarea name="message"></textarea>
+          <input type="checkbox" name="privacyPolicy" />
+        </form>
+      </div>
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
         {/* Tło sekcji z gradientem jak na stronie głównej */}
@@ -193,13 +195,7 @@ const ContactPage: React.FC = () => {
                 method="POST"
                 data-netlify="true"
                 className="space-y-6"
-                onSubmit={(e) => {
-                  if (!formState.privacyPolicy) {
-                    e.preventDefault();
-                    alert('Proszę zaakceptować Politykę Prywatności, aby kontynuować.');
-                  }
-                  // Brak obsługi wysyłki przez JS, klasyczne wysyłanie formularza
-                }}
+                onSubmit={handleSubmit}
               >
                 <input type="hidden" name="form-name" value="contact" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
