@@ -5,6 +5,14 @@
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
   SECRETS_SCAN_ENABLED = "false"
+  # Zmienne środowiskowe dla formularza kontaktowego
+  EMAIL_HOST = "smtp.gmail.com"
+  EMAIL_PORT = "587"
+  EMAIL_USER = "flowbit.sm.automat@gmail.com"
+  EMAIL_PASSWORD = "kijgekhqavsiulam"
+  EMAIL_RECIPIENT = "flowbit.sm@gmail.com"
+  EMAIL_SECURE = "false"
+  SEND_CONFIRMATION = "true"
 
 # Usuwam plugin @netlify/plugin-nextjs, ponieważ powoduje błędy budowania
 # [[plugins]]
@@ -18,4 +26,9 @@
 [[headers]]
   for = "/(.*).(jpg|jpeg|png|svg|webp|avif|ico)"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable" 
+    Cache-Control = "public, max-age=31536000, immutable"
+    
+[[redirects]]
+  from = "/test-contact"
+  to = "/test-contact"
+  status = 200 

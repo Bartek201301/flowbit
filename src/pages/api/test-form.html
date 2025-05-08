@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test formularza kontaktowego</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background: #4a26ab;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #3a1e8c;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test formularza kontaktowego</h1>
+  <form id="contactForm">
+    <div class="form-group">
+      <label for="name">Imię i nazwisko*:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="email">Adres e-mail*:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="company">Firma:</label>
+      <input type="text" id="company" name="company">
+    </div>
+    
+    <div class="form-group">
+      <label for="interest">Temat wiadomości:</label>
+      <select id="interest" name="interest">
+        <option value="strony-internetowe">Strony internetowe</option>
+        <option value="automatyzacja">Automatyzacja procesów</option>
+        <option value="aplikacja">Aplikacja mobilna/webowa</option>
+        <option value="inne">Inne</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="message">Wiadomość*:</label>
+      <textarea id="message" name="message" rows="6" required></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
+        Wyrażam zgodę na przetwarzanie moich danych osobowych*
+      </label>
+    </div>
+    
+    <button type="submit">Wyślij wiadomość</button>
+  </form>
+  
+  <div id="result" class="result" style="display:none;"></div>
+  
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'none';
+      resultDiv.className = 'result';
+      
+      // Zbieramy dane z formularza
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        company: document.getElementById('company').value,
+        interest: document.getElementById('interest').value,
+        message: document.getElementById('message').value,
+        privacyPolicy: document.getElementById('privacyPolicy').checked
+      };
+      
+      try {
+        // Wysyłamy dane do API
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        const data = await response.json();
+        
+        // Wyświetlamy wynik
+        resultDiv.style.display = 'block';
+        
+        if (data.success) {
+          resultDiv.className = 'result success';
+          resultDiv.innerHTML = '<strong>Sukces!</strong> ' + data.message;
+          document.getElementById('contactForm').reset();
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.innerHTML = '<strong>Błąd!</strong> ' + data.message;
+        }
+      } catch (error) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = '<strong>Błąd!</strong> Wystąpił problem podczas wysyłania wiadomości. Spróbuj ponownie później.';
+        console.error('Błąd:', error);
+      }
+    });
+  </script>
+</body>
+</html> 

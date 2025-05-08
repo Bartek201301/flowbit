@@ -30,58 +30,42 @@ export default async function handler(
       });
     }
 
-    // Sprawdzamy czy zmienne środowiskowe są dostępne
-    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.error('Brak wymaganych zmiennych środowiskowych dla konfiguracji email:', {
-        host: process.env.EMAIL_HOST ? 'dostępny' : 'brak',
-        user: process.env.EMAIL_USER ? 'dostępny' : 'brak',
-        password: process.env.EMAIL_PASSWORD ? 'dostępny' : 'brak',
-        port: process.env.EMAIL_PORT || '(domyślny 587)',
-        recipient: process.env.EMAIL_RECIPIENT || '(brak - używa USER)'
-      });
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Błąd konfiguracji serwera - brak wymaganych zmiennych środowiskowych' 
-      });
-    }
+    // Dane do uwierzytelniania - używamy zmiennych środowiskowych lub wartości domyślnych
+    const emailUser = process.env.EMAIL_USER || "flowbit.sm.automat@gmail.com";
+    const emailPassword = process.env.EMAIL_PASSWORD || "kijgekhqavsiulam";
+    const emailRecipient = process.env.EMAIL_RECIPIENT || "flowbit.sm@gmail.com";
+    const emailHost = process.env.EMAIL_HOST || "smtp.gmail.com";
+    const emailPort = Number(process.env.EMAIL_PORT) || 587;
+    const emailSecure = process.env.EMAIL_SECURE === 'true';
+    const sendConfirmation = process.env.SEND_CONFIRMATION !== 'false';
+
+    // Logujemy konfigurację (bez hasła!)
+    console.log('Konfiguracja email:', { 
+      host: emailHost, 
+      port: emailPort, 
+      secure: emailSecure, 
+      user: emailUser,
+      recipient: emailRecipient,
+      sendConfirmation 
+    });
 
     // Konfiguracja transportera nodemailer
     const transportConfig = {
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 587,
-      secure: Boolean(process.env.EMAIL_SECURE) === true,
+      host: emailHost,
+      port: emailPort,
+      secure: emailSecure,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
+        user: emailUser,
+        pass: emailPassword,
+      }
     };
-
-    console.log('Konfiguracja transportera:', {
-      host: transportConfig.host,
-      port: transportConfig.port,
-      secure: transportConfig.secure,
-      user: transportConfig.auth.user,
-    });
 
     const transporter = nodemailer.createTransport(transportConfig);
 
-    // Sprawdzamy połączenie z serwerem SMTP
-    try {
-      await transporter.verify();
-      console.log('Połączenie z serwerem SMTP zweryfikowane');
-    } catch (verifyError) {
-      console.error('Błąd weryfikacji serwera SMTP:', verifyError);
-      return res.status(500).json({
-        success: false,
-        message: 'Nie można połączyć się z serwerem pocztowym', 
-        debug: process.env.NODE_ENV === 'development' ? verifyError : undefined
-      });
-    }
-
     // Wiadomość e-mail do administratora
     const mailData = {
-      from: `"Formularz kontaktowy" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_RECIPIENT || process.env.EMAIL_USER, // Adres na który wysyłamy wiadomości
+      from: `"Formularz kontaktowy" <${emailUser}>`,
+      to: emailRecipient,
       subject: `Nowa wiadomość od ${name}`,
       text: `
         Imię: ${name}
@@ -113,10 +97,10 @@ export default async function handler(
       const info = await transporter.sendMail(mailData);
       console.log('E-mail wysłany pomyślnie, ID:', info.messageId);
       
-      // Wysyłanie potwierdzenia dla nadawcy (opcjonalnie)
-      if (process.env.SEND_CONFIRMATION === 'true') {
+      // Wysyłanie potwierdzenia dla nadawcy
+      if (sendConfirmation) {
         const confirmationMailData = {
-          from: `"Flowbit" <${process.env.EMAIL_USER}>`,
+          from: `"Flowbit" <${emailUser}>`,
           to: email,
           subject: 'Dziękujemy za kontakt',
           text: `
@@ -134,15 +118,16 @@ export default async function handler(
             <p>Pozdrawiamy,<br>Zespół Flowbit</p>
           `,
         };
+        
         await transporter.sendMail(confirmationMailData);
         console.log('Wysłano potwierdzenie do nadawcy:', email);
       }
-    } catch (mailError) {
-      console.error('Błąd wysyłania e-maila:', mailError);
+    } catch (error) {
+      console.error('Błąd wysyłania e-maila:', error);
       return res.status(500).json({ 
         success: false, 
         message: 'Wystąpił problem podczas wysyłania wiadomości e-mail',
-        debug: process.env.NODE_ENV === 'development' ? mailError : undefined
+        debug: process.env.NODE_ENV === 'development' ? error : undefined
       });
     }
 
