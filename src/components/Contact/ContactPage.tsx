@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mail, Instagram, Linkedin, ChevronDown, ArrowRight, MessageCircle, Phone, Facebook, Globe } from 'lucide-react';
+
+// Funkcja generująca token CSRF
+const generateCSRFToken = (): string => {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+};
 
 const ContactPage: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -10,10 +16,26 @@ const ContactPage: React.FC = () => {
     interest: 'strony-internetowe',
     message: '',
     privacyPolicy: false,
+    phoneNumber: '', // Pole honeypot do wykrywania botów
+    csrfToken: '', // Dodany token CSRF
   });
 
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // Generowanie tokenu CSRF przy pierwszym renderowaniu
+  useEffect(() => {
+    // Sprawdzamy, czy już mamy token w localStorage
+    const existingToken = localStorage.getItem('contactFormCsrfToken');
+    
+    if (existingToken) {
+      setFormState(prev => ({ ...prev, csrfToken: existingToken }));
+    } else {
+      const token = generateCSRFToken();
+      setFormState(prev => ({ ...prev, csrfToken: token }));
+      localStorage.setItem('contactFormCsrfToken', token);
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -47,6 +69,11 @@ const ContactPage: React.FC = () => {
       
       if (response.ok) {
         setFormStatus('success');
+        
+        // Generujemy nowy token CSRF po pomyślnym przesłaniu
+        const newToken = generateCSRFToken();
+        localStorage.setItem('contactFormCsrfToken', newToken);
+        
         setFormState({
           name: '',
           email: '',
@@ -54,6 +81,8 @@ const ContactPage: React.FC = () => {
           interest: 'strony-internetowe',
           message: '',
           privacyPolicy: false,
+          phoneNumber: '',
+          csrfToken: newToken,
         });
       } else {
         console.error('Błąd formularza:', data.message);
@@ -207,6 +236,22 @@ const ContactPage: React.FC = () => {
                 className="space-y-6"
                 onSubmit={handleSubmit}
               >
+                {/* Pole honeypot - ukryte pole, niewidoczne dla użytkowników, ale boty mogą je wypełnić */}
+                <div className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                  <label htmlFor="phoneNumber">
+                    Nie wypełniaj tego pola
+                  </label>
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    id="phoneNumber"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formState.phoneNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

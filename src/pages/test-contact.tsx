@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import Head from 'next/head';
 
 type FormData = {
@@ -8,11 +8,19 @@ type FormData = {
   interest: string;
   message: string;
   privacyPolicy: boolean;
+  phoneNumber: string; // Pole honeypot
+  csrfToken: string; // Token CSRF
 };
 
 type FormResponse = {
   success: boolean;
   message: string;
+};
+
+// Funkcja generująca token CSRF
+const generateCSRFToken = (): string => {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
 };
 
 export default function TestContact() {
@@ -23,10 +31,32 @@ export default function TestContact() {
     interest: 'strony-internetowe',
     message: '',
     privacyPolicy: false,
+    phoneNumber: '', // Pole honeypot - puste dla prawdziwych użytkowników
+    csrfToken: '', // Token CSRF - zostanie wygenerowany
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formResponse, setFormResponse] = useState<FormResponse | null>(null);
+  const [showSpamInfo, setShowSpamInfo] = useState(false);
+  
+  // Generowanie tokenu CSRF przy pierwszym renderowaniu
+  useEffect(() => {
+    // Używamy jednego tokenu na sesję albo pobieramy istniejący z localStorage
+    const existingToken = localStorage.getItem('csrfToken');
+    
+    if (existingToken) {
+      setFormData(prev => ({ ...prev, csrfToken: existingToken }));
+    } else {
+      const token = generateCSRFToken();
+      setFormData(prev => ({ ...prev, csrfToken: token }));
+      localStorage.setItem('csrfToken', token);
+    }
+    
+    // Dodajemy czyszczenie timera
+    return () => {
+      // Nic nie robimy, ale pozwala to uniknąć potencjalnych wycieków pamięci
+    };
+  }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -42,6 +72,20 @@ export default function TestContact() {
     e.preventDefault();
     setIsSubmitting(true);
     setFormResponse(null);
+    setShowSpamInfo(false);
+    
+    // Weryfikacja CSRF token przed wysłaniem - wyłączona w trybie deweloperskim
+    if (process.env.NODE_ENV !== 'development') {
+      const storedToken = localStorage.getItem('csrfToken');
+      if (storedToken !== formData.csrfToken) {
+        setFormResponse({
+          success: false,
+          message: 'Błąd weryfikacji bezpieczeństwa. Proszę odświeżyć stronę i spróbować ponownie.'
+        });
+        setIsSubmitting(false);
+        return;
+      }
+    }
     
     try {
       const response = await fetch('/api/contact', {
@@ -56,6 +100,10 @@ export default function TestContact() {
       setFormResponse(data);
       
       if (data.success) {
+        // Generujemy nowy token CSRF po pomyślnym przesłaniu
+        const newToken = generateCSRFToken();
+        localStorage.setItem('csrfToken', newToken);
+        
         setFormData({
           name: '',
           email: '',
@@ -63,7 +111,12 @@ export default function TestContact() {
           interest: 'strony-internetowe',
           message: '',
           privacyPolicy: false,
+          phoneNumber: '',
+          csrfToken: newToken,
         });
+        
+        // Pokazujemy informację o możliwości trafienia do spamu
+        setShowSpamInfo(true);
       }
     } catch (error) {
       setFormResponse({
@@ -87,6 +140,28 @@ export default function TestContact() {
         <h1>Test formularza kontaktowego</h1>
         
         <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+          {/* Ukryte pole z tokenem CSRF */}
+          <input
+            type="hidden"
+            name="csrfToken"
+            value={formData.csrfToken}
+          />
+          
+          {/* Pole honeypot - ukryte przed użytkownikiem */}
+          <div style={{ display: 'none' }} aria-hidden="true">
+            <label>
+              Numer telefonu (nie wypełniaj):
+              <input
+                type="text"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
+          </div>
+          
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
               Imię i nazwisko*:
@@ -200,6 +275,24 @@ export default function TestContact() {
             }}
           >
             <strong>{formResponse.success ? 'Sukces!' : 'Błąd!'}</strong> {formResponse.message}
+          </div>
+        )}
+        
+        {showSpamInfo && (
+          <div
+            style={{
+              marginTop: '1rem',
+              padding: '1rem',
+              borderRadius: '4px',
+              backgroundColor: '#fff3cd',
+              color: '#856404',
+              border: '1px solid #ffeeba',
+            }}
+          >
+            <p style={{ margin: 0 }}>
+              <strong>Uwaga:</strong> Email z potwierdzeniem może trafić do folderu Spam. 
+              Prosimy sprawdzić swoje filtry antyspamowe, jeśli wiadomość nie pojawi się w skrzynce odbiorczej.
+            </p>
           </div>
         )}
       </main>
