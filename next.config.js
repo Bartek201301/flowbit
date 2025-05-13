@@ -1,12 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  reactStrictMode: false,
   images: {
     domains: ['flowbit.pl', 'localhost'],
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
+  },
+  webpack: (config) => {
+    return config;
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
